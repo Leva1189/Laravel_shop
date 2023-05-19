@@ -1,0 +1,65 @@
+version: '3'
+services:
+
+  #PHP Service
+  php:
+    build:
+      context: .
+      dockerfile: etc/php/Dockerfile
+    image: php:8.2.5-fpm
+    container_name: 'php_shop'
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./src:/var/www
+      - ./etc/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - shop
+
+  #Nginx Service
+  webserver:
+    image: nginx:stable-alpine
+    container_name: 'web_shop'
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "81:80"
+      - "441:443"
+    volumes:
+      - ./src:/var/www
+      - ./etc/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - shop
+
+  #MySQL Service
+  db:
+    image: mysql:5.7.22
+    container_name: 'db_shop'
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "33061:3306"
+    environment:
+      MYSQL_DATABASE: db_shop
+      MYSQL_ROOT_PASSWORD: shop
+      SERVICE_TAGS: dev
+      SERVICE_NAME: root
+    volumes:
+      - ./etc/mysql/data:/var/lib/mysql/
+      - ./etc/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - shop
+
+#Docker Networks
+networks:
+  shop:
+    driver: bridge
+
+##Volumes
+volumes:
+  data:
+    driver: local
