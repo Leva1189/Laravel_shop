@@ -17,6 +17,8 @@ return new class extends Migration
             $table->integer('price');
             $table->boolean('in_stock');
             $table->text('description');
+            $table->string('alias');
+
             $table->timestamps();
         });
     }

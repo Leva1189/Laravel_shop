@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     //
-    public function show($cat, $product_id){
-        $item = Product::where('id', $product_id)->first();
+    public function show($cat, $alias){
+        $item = Product::where('alias', $alias)->first();
 
         return view('site.product.show', [
             'item'=>$item
