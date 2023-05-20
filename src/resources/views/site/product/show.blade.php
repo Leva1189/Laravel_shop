@@ -1,7 +1,6 @@
 @extends('layouts.site')
 
-@section('title', 'Product')
-
+@section('title', $item->title)
 @section('custom_css')
     <link rel="stylesheet" type="text/css" href="/site/styles/product.css">
     <link rel="stylesheet" type="text/css" href="/site/styles/product_responsive.css">
@@ -9,13 +8,49 @@
 
 @section('custom_js')
     <script src="/site/js/product.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.cart_button').click(function (event) {
+                event.preventDefault()
+                addToCart()
+            })
+        })
+
+        function addToCart() {
+            let id = $('.details_name').data('id')
+            let qty = parseInt($('#quantity_input').val())
+
+            let total_qty = parseInt($('.cart-qty').text())
+            total_qty += qty
+            $('.cart-qty').text(total_qty)
+
+            $.ajax({
+                url: "{{route('addToCart')}}",
+                type: "POST",
+                data: {
+                    id: id,
+                    qty: qty,
+                },
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: (data) => {
+                    console.log(data)
+                },
+                error: (data) => {
+                    console.log(data)
+                }
+            });
+        }
+    </script>
 @endsection
 
 @section('content')
+    <!-- Home -->
 
     <div class="home">
         <div class="home_container">
-            <div class="home_background" style="background-image:url(/site/images/categories.jpg)"></div>
+            <div class="home_background" style="background-image:url(/images/categories.jpg)"></div>
             <div class="home_content_container">
                 <div class="container">
                     <div class="row">
@@ -42,24 +77,25 @@
                     <div class="details_image">
                         @php
                             $image = '';
-                            if (count($item->images) > 0){
+                            if(count($item->images) > 0){
                                 $image = $item->images[0]['img'];
-                            }else{
-                                $image = 'no-image.png';
+                            } else {
+                                $image = 'no_image.png';
                             }
                         @endphp
-                        <div class="details_image_large"><img src="/site/images/{{ $image }}" alt="{{ $item->title }}"><div class="product_extra product_new"><a href="categories.html">New</a></div></div>
+                        <div class="details_image_large"><img src="/images/{{$image}}" alt="{{$item->title}}"><div class="product_extra product_new"><a href="categories.html">New</a></div></div>
                         <div class="details_image_thumbnails d-flex flex-row align-items-start justify-content-between">
-                        @if($image == 'no-image.png')
-                        @else
+                            @if($image == 'no_image.png')
+
+                            @else
                                 @foreach($item->images as $img)
                                     @if($loop->first)
-                                        <div class="details_image_thumbnail active" data-image="/site/images/{{ $img['img'] }}"><img src="/site/images/{{ $img['img'] }}" alt="{{ $item->title }}"></div>
+                                        <div class="details_image_thumbnail active" data-image="/images/{{$img['img']}}"><img src="/images/{{$img['img']}}" alt="{{$item->title}}"></div>
                                     @else
-                                        <div class="details_image_thumbnail" data-image="/site/images/{{ $img['img'] }}"><img src="/site/images/{{ $img['img'] }}" alt="{{ $item->title }}"></div>
+                                        <div class="details_image_thumbnail" data-image="/images/{{$img['img']}}"><img src="/images/{{$img['img']}}" alt="{{$item->title}}"></div>
                                     @endif
                                 @endforeach
-                        @endif
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -67,28 +103,25 @@
                 <!-- Product Content -->
                 <div class="col-lg-6">
                     <div class="details_content">
-                        <div class="details_name">{{ $item->title }}</div>
+                        <div class="details_name" data-id="{{$item->id}}">{{$item->title}}</div>
                         @if($item->new_price != null)
-                            <div class="details_discount">${{ $item->price }}</div>
-                            <div class="details_price">${{ $item->new_price }}</div>
+                            <div class="details_discount">${{$item->price}}</div>
+                            <div class="details_price">${{$item->new_price}}</div>
                         @else
-                            <div class="product_price">${{ $item->price }}</div>
-                        @endif
+                            <div class="details_price">${{$item->price}}</div>
+                    @endif
 
-
-
-                        <!-- In Stock -->
+                    <!-- In Stock -->
                         <div class="in_stock_container">
                             <div class="availability">Availability:</div>
                             @if($item->in_stock)
                                 <span>In Stock</span>
                             @else
-                                <span style="color: #cc0000">None</span>
+                                <span style="color: #cc0000">Unavailable</span>
                             @endif
-
                         </div>
                         <div class="details_text">
-                            <p>{{ $item->description }}</p>
+                            <p>{{$item->description}}</p>
                         </div>
 
                         <!-- Product Quantity -->
@@ -125,7 +158,7 @@
                         <div class="reviews_title"><a href="#">Reviews <span>(1)</span></a></div>
                     </div>
                     <div class="description_text">
-                        <p>{{ $item->description }}</p>
+                        <p>{{$item->description}}</p>
                     </div>
                 </div>
             </div>
@@ -151,7 +184,7 @@
                             <div class="product_image"><img src="/site/images/product_1.jpg" alt=""></div>
                             <div class="product_extra product_new"><a href="categories.html">New</a></div>
                             <div class="product_content">
-                                <div class="product_title"><a href="product.html">Smart Phone</a></div>
+                                <div class="product_title"><a href="/siteproduct.html">Smart Phone</a></div>
                                 <div class="product_price">$670</div>
                             </div>
                         </div>
@@ -215,6 +248,5 @@
             </div>
         </div>
     </div>
-
 @endsection
 

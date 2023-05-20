@@ -13,6 +13,8 @@
     <link rel="stylesheet" type="text/css" href="/site/plugins/OwlCarousel2-2.2.1/animate.css">
     <link rel="stylesheet" type="text/css" href="/site/styles/main_styles.css">
     <link rel="stylesheet" type="text/css" href="/site/styles/responsive.css">
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('custom_css')
 </head>
 <body>
@@ -27,7 +29,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="header_content d-flex flex-row align-items-center justify-content-start">
-                            <div class="logo"><a href="#">Sublime.</a></div>
+                            <div class="logo"><a href="/">Sublime.</a></div>
                             <nav class="main_nav">
                                 <ul>
                                     <li class="hassubs active">
@@ -44,9 +46,8 @@
                                         <a href="categories.html">Categories</a>
                                         <ul>
                                             @foreach($categories as $category)
-                                                <li><a href="{{ route('showCategory', $category->alias) }}">{{ $category->title }}</a></li>
+                                                <li><a href="{{route('showCategory',$category->alias)}}">{{$category->title}}</a></li>
                                             @endforeach
-
                                         </ul>
                                     </li>
                                     <li><a href="#">Accessories</a></li>
@@ -56,7 +57,7 @@
                             </nav>
                             <div class="header_extra ml-auto">
                                 <div class="shopping_cart">
-                                    <a href="cart.html">
+                                    <a href="{{route('cartIndex')}}">
                                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                                              viewBox="0 0 489 489" style="enable-background:new 0 0 489 489;" xml:space="preserve">
 											<g>
@@ -67,7 +68,7 @@
 													c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5v-41h45.2l26.9,302.3C412.8,445.2,392.1,462,366.8,462z"/>
                                             </g>
 										</svg>
-                                        <div>Cart <span>(0)</span></div>
+                                        <div>Cart (<span class="cart-qty"></span>)</div>
                                     </a>
                                 </div>
                                 <div class="search">
@@ -175,20 +176,18 @@
         </div>
     </div>
 
-    <!-- Home -->
+@yield('content')
 
-  @yield('content')
-
-    <!-- Footer -->
+<!-- Footer -->
 
     <div class="footer_overlay"></div>
     <footer class="footer">
-        <div class="footer_background" style="background-image:url(/site/images/footer.jpg)"></div>
+        <div class="footer_background" style="background-image:url(images/footer.jpg)"></div>
         <div class="container">
             <div class="row">
                 <div class="col">
                     <div class="footer_content d-flex flex-lg-row flex-column align-items-center justify-content-lg-start justify-content-center">
-                        <div class="footer_logo"><a href="#">Sublime.</a></div>
+                        <div class="footer_logo"><a href="/">Sublime.</a></div>
                         <div class="copyright ml-auto mr-auto"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                             Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
                             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></div>
@@ -219,7 +218,8 @@
 <script src="/site/plugins/Isotope/isotope.pkgd.min.js"></script>
 <script src="/site/plugins/easing/easing.js"></script>
 <script src="/site/plugins/parallax-js-master/parallax.min.js"></script>
-<script src="/site/js/custom.js"></script>
+<script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+<script src="/js/custom.js"></script>
 @yield('custom_js')
 </body>
 </html>
